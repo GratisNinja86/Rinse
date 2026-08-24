@@ -1,14 +1,13 @@
 Rinse = {}
 Rinse.L = {
-    ["Run Rinse"] = 1,
-    ["Toggle Options"] = 1,
-    ["Toggle Prio List"] = 1,
-    ["Toggle Skip List"] = 1,
-    ["Snare"] = 1,
+    -- Dispel types
+    ["Snare"] = 1, -- not a real type
     ["Magic"] = 1,
     ["Curse"] = 1,
     ["Disease"] = 1,
     ["Poison"] = 1,
+
+    -- Player dispel abilities
     ["Cleanse"] = 1,
     ["Purify"] = 1,
     ["Hand of Freedom"] = 1,
@@ -18,6 +17,10 @@ Rinse.L = {
     ["Abolish Disease"] = 1,
     ["Remove Lesser Curse"] = 1,
     ["Devour Magic"] = 1,
+    ["Cure Disease"] = 1,
+    ["Cure Poison"] = 1,
+
+    -- Debuff names
     ["Curse of Recklessness"] = 1,
     ["Delusions of Jin'do"] = 1,
     ["Dread of Outland"] = 1,
@@ -61,10 +64,17 @@ Rinse.L = {
     ["Wing Clip"] = 1,
     ["Mind Flay"] = 1,
     ["Web"] = 1,
+    ["Web Explosion"] = 1,
     ["Enveloping Web"] = 1,
     ["Encasing Webs"] = 1,
     ["Surge of Mana"] = 1,
     ["Hooked Net"] = 1,
+
+    -- UI
+    ["Run Rinse"] = 1,
+    ["Toggle Options"] = 1,
+    ["Toggle Prio List"] = 1,
+    ["Toggle Skip List"] = 1,
     ["Warriors"] = 1,
     ["Druids"] = 1,
     ["Paladins"] = 1,
@@ -114,9 +124,7 @@ Rinse.L = {
     ["Check this to invert debuffs growth direction."] = 1,
     ["Cure Magic"] = 1,
     ["Check this to cure magic debuffs."] = 1,
-    ["Cure Disease"] = 1,
     ["Check this to cure diseases."] = 1,
-    ["Cure Poison"] = 1,
     ["Check this to cure poisons."] = 1,
     ["Cure Curse"] = 1,
     ["Check this to cure curses."] = 1,
@@ -142,6 +150,10 @@ Rinse.L = {
 
 local locale = GetLocale()
 if locale == "zhCN" then
+    Rinse.L["Magic"] = "魔法"
+    Rinse.L["Curse"] = "诅咒"
+    Rinse.L["Disease"] = "疾病"
+    Rinse.L["Poison"] = "中毒"
     -- Player dispel abilities
     Rinse.L["Cleanse"] = "清洁术"
     Rinse.L["Purify"] = "纯净术"
@@ -203,8 +215,81 @@ if locale == "zhCN" then
     Rinse.L["Mind Flay"] = "精神鞭笞"
     Rinse.L["Web"] = "蛛网"
     Rinse.L["Surge of Mana"] = "法力涌动"
+elseif locale == "esES" then
+    Rinse.L["Magic"] = "Mágico"
+    Rinse.L["Curse"] = "Maldición"
+    Rinse.L["Disease"] = "Enfermedad"
+    Rinse.L["Poison"] = "Veneno"
+elseif locale == "ptBR" then
+    Rinse.L["Magic"] = "Magia"
+    Rinse.L["Curse"] = "Maldição"
+    Rinse.L["Disease"] = "Doença"
+    Rinse.L["Poison"] = "Veneno"
 end
 
 for str in pairs(Rinse.L) do
     if Rinse.L[str] == 1 then Rinse.L[str] = str end
+end
+
+if C_Spell then
+    Rinse.L["Cleanse"] = C_Spell.GetSpellName(4987)
+    Rinse.L["Purify"] = C_Spell.GetSpellName(1152)
+    Rinse.L["Hand of Freedom"] = C_Spell.GetSpellName(1044)
+    Rinse.L["Remove Curse"] = C_Spell.GetSpellName(2782)
+    Rinse.L["Remove Lesser Curse"] = C_Spell.GetSpellName(475)
+    Rinse.L["Dispel Magic"] = C_Spell.GetSpellName(527)
+    Rinse.L["Devour Magic"] = C_Spell.GetSpellName(19505)
+    Rinse.L["Abolish Poison"] = C_Spell.GetSpellName(2893)
+    Rinse.L["Abolish Disease"] = C_Spell.GetSpellName(552)
+    Rinse.L["Cure Poison"] = C_Spell.GetSpellName(526)
+    Rinse.L["Cure Disease"] = C_Spell.GetSpellName(528)
+
+    Rinse.L["Curse of Recklessness"] = C_Spell.GetSpellName(704)
+    Rinse.L["Delusions of Jin'do"] = C_Spell.GetSpellName(24306)
+    Rinse.L["Dread of Outland"] = C_Spell.GetSpellName(51913)
+    Rinse.L["Curse of Legion"] = C_Spell.GetSpellName(58010)
+    Rinse.L["Phase Shifted"] = C_Spell.GetSpellName(51197)
+    Rinse.L["Unstable Mana"] = C_Spell.GetSpellName(57647)
+    Rinse.L["Seed of Corruption"] = C_Spell.GetSpellName(33046)
+    Rinse.L["Mutating Injection"] = C_Spell.GetSpellName(28169)
+    Rinse.L["Sanctum Mind Decay"] = C_Spell.GetSpellName(56512)
+    Rinse.L["Wyvern Sting"] = C_Spell.GetSpellName(19386)
+    Rinse.L["Poison Mushroom"] = C_Spell.GetSpellName(6727)
+    Rinse.L["Gastronomic Guilt"] = C_Spell.GetSpellName(52730)
+    Rinse.L["Tranquilizing Poison"] = C_Spell.GetSpellName(24002)
+    Rinse.L["Wyrmkins Venom"] = C_Spell.GetSpellName(56503)
+    Rinse.L["Slowing Poison"] = C_Spell.GetSpellName(7992)
+    Rinse.L["Mana Buildup"] = C_Spell.GetSpellName(57648)
+    Rinse.L["Enveloped Flames"] = C_Spell.GetSpellName(58004)
+    Rinse.L["Poison Charge"] = C_Spell.GetSpellName(28431)
+    Rinse.L["Arcane Focus"] = C_Spell.GetSpellName(51115)
+    Rinse.L["Freezing Chill"] = C_Spell.GetSpellName(51117)
+    Rinse.L["Icicles"] = C_Spell.GetSpellName(51991)
+    Rinse.L["Arcane Overload"] = C_Spell.GetSpellName(51100)
+    Rinse.L["Dreamless Sleep"] = C_Spell.GetSpellName(15822)
+    Rinse.L["Greater Dreamless Sleep"] = C_Spell.GetSpellName(24360)
+    Rinse.L["Songflower Serenade"] = C_Spell.GetSpellName(15366)
+    Rinse.L["Mol'dar's Moxie"] = C_Spell.GetSpellName(22818)
+    Rinse.L["Fengus' Ferocity"] = C_Spell.GetSpellName(22817)
+    Rinse.L["Slip'kik's Savvy"] = C_Spell.GetSpellName(22820)
+    Rinse.L["Thunderfury"] = C_Spell.GetSpellName(21992)
+    Rinse.L["Magma Shackles"] = C_Spell.GetSpellName(19496)
+    Rinse.L["Silence"] = C_Spell.GetSpellName(15487)
+    Rinse.L["Ancient Hysteria"] = C_Spell.GetSpellName(19372)
+    Rinse.L["Ignite Mana"] = C_Spell.GetSpellName(19659)
+    Rinse.L["Tainted Mind"] = C_Spell.GetSpellName(16567)
+    Rinse.L["Smoke Bomb"] = C_Spell.GetSpellName(57096)
+    Rinse.L["Screams of the Past"] = C_Spell.GetSpellName(7074)
+    Rinse.L["Moroes Curse"] = C_Spell.GetSpellName(57100)
+    Rinse.L["Curse of Manascale"] = C_Spell.GetSpellName(51186)
+    Rinse.L["Rift Entanglement"] = C_Spell.GetSpellName(51194)
+    Rinse.L["Hamstring"] = C_Spell.GetSpellName(1715)
+    Rinse.L["Wing Clip"] = C_Spell.GetSpellName(2974)
+    Rinse.L["Mind Flay"] = C_Spell.GetSpellName(17311)
+    Rinse.L["Web"] = C_Spell.GetSpellName(745)
+    Rinse.L["Web Explosion"] = C_Spell.GetSpellName(15474)
+    Rinse.L["Enveloping Web"] = C_Spell.GetSpellName(15471)
+    Rinse.L["Encasing Webs"] = C_Spell.GetSpellName(4962)
+    Rinse.L["Surge of Mana"] = C_Spell.GetSpellName(51175)
+    Rinse.L["Hooked Net"] = C_Spell.GetSpellName(13608)
 end

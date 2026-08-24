@@ -251,6 +251,7 @@ SnareDebuffs[L["Hamstring"]] = true
 SnareDebuffs[L["Wing Clip"]] = true
 SnareDebuffs[L["Mind Flay"]] = true
 SnareDebuffs[L["Web"]] = true
+SnareDebuffs[L["Web Explosion"]] = true
 SnareDebuffs[L["Enveloping Web"]] = true
 SnareDebuffs[L["Encasing Webs"]] = true
 SnareDebuffs[L["Surge of Mana"]] = true
@@ -359,7 +360,9 @@ local function CanCast(unit, spell)
 		-- if spell and IsSpellInRange then
 		-- 	inRange = IsSpellInRange(spell, unit) == 1
 		-- end
-		if unitxp then
+		if C_Spell and spell then
+			inRange = C_Spell.IsSpellInRange(spell, unit)
+		elseif unitxp then
 			-- Accounts for true reach. A tauren can dispell a male tauren at 38y!
 			inRange = UnitXP("distanceBetween", "player", unit) < 30
 		elseif superwow then
@@ -380,7 +383,9 @@ local function CanCast(unit, spell)
 	end
 
 	if inRange then
-        if unitxp then
+		if UnitInLineOfSight then
+			return UnitInLineOfSight(unit)
+		elseif unitxp then
             return UnitXP("inSight", "player", unit)
         else
             return UnitIsVisible(unit)
@@ -1119,29 +1124,12 @@ function RinseFrame_OnLoad()
 	if playerClass == "PRIEST" then
 		RinseFrame:RegisterEvent("PLAYER_AURAS_CHANGED")
 	end
-	if not superwow then
+	if not superwow and not C_Spell then
 		-- For restoring auto attack
 		RinseFrame:RegisterEvent("PLAYER_ENTER_COMBAT")
 		RinseFrame:RegisterEvent("PLAYER_LEAVE_COMBAT")
 	end
 	RinseFrameTitle:SetText("Rinse "..GetAddOnMetadata("Rinse", "Version"))
-end
-
--- Check if unit can be cleansed
-local function CanBeCleansed(unit)
-	return (UnitCanAssist("player", unit) and not UnitIsCharmed(unit))
-	    or (not UnitCanAssist("player", unit) and UnitIsCharmed(unit))
-end
-
-local function GoodUnit(unit)
-	if not (unit and UnitExists(unit)) then
-		return false
-	end
-	local name = UnitName(unit)
-	if not name or SkipNames[name] then
-		return false
-	end
-	return UnitIsVisible(unit) and CanBeCleansed(unit)
 end
 
 function RinseFrame_OnEvent()
@@ -1313,7 +1301,15 @@ local function GetDebuffInfo(unit, i)
 	local debuffType
 	local texture
 	local applications
-	if superwow then
+	if C_UnitAuras then
+		local data = C_UnitAuras.GetAuraDataByIndex(unit, i, "HARMFUL")
+		if data then
+			debuffName = data.name
+			debuffType = data.dispelName
+			texture = data.icon
+			applications = data.applications
+		end
+	elseif superwow then
 		local spellId
 		texture, applications, debuffType, spellId = UnitDebuff(unit, i)
 		if spellId then
@@ -1327,7 +1323,7 @@ local function GetDebuffInfo(unit, i)
 		debuffType = RinseScanTooltipTextRight1:GetText() or ""
 		texture, applications, debuffType = UnitDebuff(unit, i)
 	end
-	if debuffName and SnareDebuffs[debuffName] and not debuffType then
+	if debuffName and SnareDebuffs[debuffName] then
 		debuffType = L["Snare"]
 	end
 	return debuffType, debuffName, texture, applications
@@ -1355,6 +1351,14 @@ local function SaveDebuffInfo(unit, debuffIndex, i, class, debuffType, debuffNam
 		return true
 	end
 	return false
+end
+
+local function GoodUnit(unit)
+	if not (unit and UnitExists(unit)) then return false end
+	if not UnitIsVisible(unit) then return false end
+	local name = UnitName(unit)
+	if not name or SkipNames[name] then return false end
+	return UnitCanAssist("player", unit) and not UnitIsCharmed(unit) or not UnitCanAssist("player", unit) and UnitIsCharmed(unit)
 end
 
 function RinseFrame_OnUpdate(elapsed)
@@ -1571,6 +1575,10 @@ function Rinse_Cleanse(button, attemptedCast)
 		if casting == 0 and channeling == 0 then
 			castingInterruptableSpell = false
 		end
+	elseif C_Spell then
+		local cast, _, _, _, _, _, _, notInterruptibleCast = C_Spell.CastingInfo()
+		local channel, _, _, _, _, _, notInterruptibleChannel = C_Spell.ChannelInfo()
+		castingInterruptableSpell = (cast and not notInterruptibleCast) or (channel and not notInterruptibleChannel)
 	end
 	if castingInterruptableSpell and stopCastCooldown <= 0 then
 		SpellStopCasting()
@@ -1585,6 +1593,8 @@ function Rinse_Cleanse(button, attemptedCast)
 	end
 	if superwow then
 		CastSpellByName(spellName, button.unit)
+	elseif C_Spell then
+		C_Spell.CastAtUnit(spellName, button.unit)
 	else
 		local selfcast = GetCVar("autoselfcast")
 		local assist = GetCVar("assistattack")
