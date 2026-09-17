@@ -969,6 +969,13 @@ function Rinse_ToggleLock()
 	RinseFrame:EnableMouse(not RINSE_CONFIG.LOCK)
 end
 
+function Rinse_ToggleHideEmpty()
+	RINSE_CONFIG.HIDE_EMPTY = not RINSE_CONFIG.HIDE_EMPTY
+	if not RINSE_CONFIG.HIDE_EMPTY and not RinseFrame:IsShown() then
+		RinseFrame:Show()
+	end
+end
+
 local function UpdateBackdrop()
 	if RINSE_CONFIG.BACKDROP then
 		RinseFrame:SetBackdrop(Backdrop)
@@ -1157,6 +1164,7 @@ function RinseFrame_OnEvent()
 		RINSE_CONFIG.SHADOWFORM = RINSE_CONFIG.SHADOWFORM == nil and true or RINSE_CONFIG.SHADOWFORM
 		RINSE_CONFIG.IGNORE_ABOLISH = RINSE_CONFIG.IGNORE_ABOLISH == nil and true or RINSE_CONFIG.IGNORE_ABOLISH
 		RINSE_CONFIG.PETS = RINSE_CONFIG.PETS == nil and false or RINSE_CONFIG.PETS
+		RINSE_CONFIG.HIDE_EMPTY = RINSE_CONFIG.HIDE_EMPTY == nil and false or RINSE_CONFIG.HIDE_EMPTY
 		RINSE_CHAR_CONFIG.BLACKLIST = RINSE_CHAR_CONFIG.BLACKLIST or {}
 		RINSE_CHAR_CONFIG.FILTER = RINSE_CHAR_CONFIG.FILTER or {
 			[L["Magic"]] = Spells[playerClass][L["Magic"]] == nil,
@@ -1195,6 +1203,7 @@ function RinseFrame_OnEvent()
 		RinseOptionsFrameBackdrop:SetChecked(RINSE_CONFIG.BACKDROP)
 		RinseOptionsFrameShowHeader:SetChecked(RINSE_CONFIG.SHOW_HEADER)
 		RinseOptionsFrameFlip:SetChecked(RINSE_CONFIG.FLIP)
+		RinseOptionsFrameHideEmpty:SetChecked(RINSE_CONFIG.HIDE_EMPTY)
 		RinseOptionsFrameButtonsSlider:SetValue(RINSE_CONFIG.BUTTONS)
 		UpdateBlacklist()
 		RinseOptionsFrameWyvernSting:SetChecked(not Blacklist[L["Wyvern Sting"]])
@@ -1540,6 +1549,21 @@ function RinseFrame_OnUpdate(elapsed)
 		if not RinseFrameDebuff1:IsShown() then
 			playNoticeSound = true
 		end
+	end
+
+	-- Show window only if there is a debuff to remove (if enabled)
+	if RINSE_CONFIG.HIDE_EMPTY then
+		if RinseFrameDebuff1:IsShown() then
+			if not RinseFrame:IsShown() then
+				RinseFrame:Show()
+			end
+		else
+			if RinseFrame:IsShown() then
+				RinseFrame:Hide()
+			end
+		end
+	elseif not RinseFrame:IsShown() then
+		RinseFrame:Show()
 	end
 end
 
