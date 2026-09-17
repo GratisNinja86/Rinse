@@ -119,6 +119,7 @@ Rinse.L = {
     ["Show Header"] = 1,
     ["Show or hide header."] = 1,
     ["Lock Frame Position"] = 1,
+    ["Hide Window When Empty"] = 1,
     ["Prevent window from moving."] = 1,
     ["Invert Direction"] = 1,
     ["Check this to invert debuffs growth direction."] = 1,
