@@ -203,6 +203,11 @@
 				</Anchors>
 			</Button>
 		</Frames>
+		<Scripts>
+			<OnUpdate>
+				RinseFrame_OnUpdate(arg1)
+			</OnUpdate>
+		</Scripts>
 	</Frame>
 
 	<!-- Skip List Frame -->
@@ -955,9 +960,26 @@
 					</OnClick>
 				</Scripts>
 			</CheckButton>
-			<CheckButton name="$parentFlip" inherits="RinseOptionsCheckButtonTemplate">
+			<CheckButton name="$parentHideEmpty" inherits="RinseOptionsCheckButtonTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentLock" relativePoint="BOTTOMLEFT">
+					<Offset x="0" y="7"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(Rinse.L["Hide Window When Empty"])
+						this.tooltipText = Rinse.L["Only show the Rinse window while there is a debuff to remove."]
+					</OnLoad>
+					<OnClick>
+						Rinse_ToggleHideEmpty()
+						PlaySound("igMainMenuOptionCheckBoxOn")
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentFlip" inherits="RinseOptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="parentHideEmpty" relativePoint="BOTTOMLEFT">
 						<Offset x="0" y="-4"/>
 					</Anchor>
 				</Anchors>
